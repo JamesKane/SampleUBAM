@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-  push:
     tags:
-      - 'v*' # Trigger workflow on version tags (e.g., `v0.0.2`)
+      - 'v*' # Match version tags (e.g., v0.0.2, v1.0.0)
 
 jobs:
   build:
@@ -79,6 +78,6 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.ref_name }} # The tag that triggered this release
+          tag: ${{ github.ref_name }}
           releaseName: Release ${{ github.ref_name }}
           assets: release/SampleUBAM-${{ github.ref_name#refs/tags/ }}.jar
