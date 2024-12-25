@@ -23,14 +23,15 @@ jobs:
 
       # Step 3: Install SBT
       - name: Install SBT
-        run: |
-          echo "Installing SBT"
-          sudo apt-get update
-          sudo apt-get install -y curl gnupg
-          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
-          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8E1F4F021BF3C7CE" | sudo apt-key add
-          sudo apt-get update
-          sudo apt-get install -y sbt
+      - run: |
+      - echo "Installing SBT"
+      - sudo apt-get update
+      - sudo apt-get install -y curl gnupg
+      - echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+      - curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8E1F4F021BF3C7CE | gpg --dearmor | sudo tee /usr/share/keyrings/sbt-archive-keyring.gpg > /dev/null
+      - echo "deb [signed-by=/usr/share/keyrings/sbt-archive-keyring.gpg] https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+      - sudo apt-get update
+      - sudo apt-get install -y sbt
 
       # Step 4: Cache SBT dependencies
       - name: Cache SBT dependencies
