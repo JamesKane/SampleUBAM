@@ -21,18 +21,24 @@ jobs:
           java-version: 21
           distribution: temurin
 
-          # Step 3: Install SBT
+      # Step 3: Install SBT
       - name: Install SBT
         run: |
           echo "Installing SBT from direct binary download"
           
-          # Download and extract the latest SBT .tgz
+          # Download and extract the latest SBT tarball
           curl -Ls https://github.com/sbt/sbt/releases/download/v1.9.7/sbt-1.9.7.tgz | tar xz
           
-          # Copy the SBT binary to a system path
-          sudo mv sbt /usr/local/bin
+          # Move extracted SBT files to /usr/local/sbt
+          sudo mv sbt /usr/local/sbt
           
-          echo "SBT installed successfully"
+          # Create a symlink in /usr/local/bin (which is in $PATH)
+          sudo ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
+          
+          echo "SBT installed successfully and added to PATH"
+          
+          # Confirm sbt is available and installed
+          sbt --version
 
       # Step 4: Cache SBT dependencies
       - name: Cache SBT dependencies
