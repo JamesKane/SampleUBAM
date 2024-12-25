@@ -21,12 +21,14 @@ object SampleUBAM {
   def main(args: Array[String]): Unit = {
     if (args.length != 3) {
       println("Usage: SampleUBAM <input_ubam_url> <output_ubam_path> <target_base_count>")
+      println("  <target_base_count>: Specify as plain number (bases), e.g., 1000000")
+      println("                       or human-readable formats, e.g., 10Mb, 1Gb.")
       System.exit(1)
     }
 
     val inputURL = args(0)
     val outputPath = args(1)
-    val targetBaseCount = args(2).toLong
+    val targetBaseCount = parseTargetBaseCount(args(2))
 
     var totalBases = 0L
     val progressFrequency = 100000 // Update progress every 100,000 bases
@@ -70,5 +72,17 @@ object SampleUBAM {
     }
 
     println(s"Sampling complete. Total sampled bases: $totalBases.")
+  }
+
+  private def parseTargetBaseCount(input: String): Long = {
+    if (input.matches("(?i)^\\d+Mb$")) {
+      input.stripSuffix("Mb").stripSuffix("MB").toLong * 1000000
+    } else if (input.matches("(?i)^\\d+Gb$")) {
+      input.stripSuffix("Gb").stripSuffix("GB").toLong * 1000000000
+    } else if (input.matches("^\\d+$")) {
+      input.toLong
+    } else {
+      throw new IllegalArgumentException("Invalid target base count format. Use plain number, XMb, or XGb.")
+    }
   }
 }
