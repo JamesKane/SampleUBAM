@@ -3,7 +3,7 @@
 
 ## Overview
 
-The `SampleUBAM` object is a Scala utility program designed to sample reads from an unaligned BAM (UBAM) file up to a specified target number of bases. It reads input UBAM data from a given URL, processes the records, and writes them to a specified output file in SAM or BAM format.
+The `SampleUBAM` is utility program designed to sample reads from an unaligned BAM (UBAM) file up to a specified target number of bases. It reads input UBAM data from a given URL, processes the records, and writes them to a specified output file in SAM or BAM format.
 
 This tool is useful for subsampling genomic sequencing data from large UBAM files, ensuring that a specified base count is achieved when sampling reads. The program operates efficiently while providing progress updates during execution.
 
@@ -34,7 +34,12 @@ Usage: SampleUBAM <input_ubam_url> <output_ubam_path> <target_base_count>
 java -cp your_program.jar org.ydnawarehouse.SampleUBAM \
      https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00117/raw_data/PacBio_HiFi/m84081_231110_195735_s1.hifi_reads.bc2071.bam \
      /mnt/md0/HumanPangenomics/PacBio/HG00117/HG00117.bam \
-     93000000000
+     93Gb
+```
+
+### Alternative Example: Using SBT
+```
+sbt "runMain org.ydnawarehouse.SampleUBAM https://s3-us-west-2.amazonaws.com/human-pangenomics/working/HPRC/HG00117/raw_data/PacBio_HiFi/m84081_231110_195735_s1.hifi_reads.bc2071.bam /mnt/md0/HumanPangenomics/PacBio/HG00117/HG00117.bam 93Gb" 2> /dev/null
 ```
 
 The above command subsamples the UBAM data from the specified URL to create an output BAM file of at most 1,000,000 bases.
