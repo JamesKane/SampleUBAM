@@ -50,11 +50,12 @@ jobs:
       - name: Build with SBT
         run: sbt assembly
 
-      # Step 6: Rename the JAR file
-      - name: Rename JAR file for Release
+      # Step 6: Rename the JAR file for release
+      - name: Rename JAR file
         run: |
           mkdir -p release
-          mv target/scala-3.3.4/SampleUBAM-assembly-*.jar release/SampleUBAM-${{ github.ref_name#refs/tags/ }}.jar 
+          TAG_NAME=${GITHUB_REF##*/} # Extract the version tag from refs/tags/v0.0.2
+          mv target/scala-3.3.4/SampleUBAM-assembly-*.jar release/SampleUBAM-${TAG_NAME}.jar
 
       # Step 7: Upload the renamed JAR file as an artifact
       - name: Upload the renamed JAR file
@@ -74,10 +75,10 @@ jobs:
         with:
           name: SampleUBAM
 
-      # Step 2: Create a GitHub Release and attach the JAR
+      # Step 2: Create a GitHub Release with the JAR file
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
           releaseName: Release ${{ github.ref_name }}
-          assets: release/SampleUBAM-${{ github.ref_name#refs/tags/ }}.jar
+          assets: release/SampleUBAM-${{ github.ref_name }}.jar
