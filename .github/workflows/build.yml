@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  push:
+    tags:
+      - 'v*' # Trigger workflow on version tags (e.g., `v0.0.2`)
 
 jobs:
   build:
@@ -48,9 +51,34 @@ jobs:
       - name: Build with SBT
         run: sbt assembly
 
-      # Step 6: Upload the artifact
-      - name: Upload JAR to GitHub Artifacts
+      # Step 6: Rename the JAR file
+      - name: Rename JAR file for Release
+        run: |
+          mkdir -p release
+          mv target/scala-3.3.4/SampleUBAM-assembly-*.jar release/SampleUBAM-${{ github.ref_name#refs/tags/ }}.jar 
+
+      # Step 7: Upload the renamed JAR file as an artifact
+      - name: Upload the renamed JAR file
         uses: actions/upload-artifact@v3
         with:
           name: SampleUBAM
-          path: target/scala-3.3.4/*.jar
+          path: release/*.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download the previously uploaded artifact
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: SampleUBAM
+
+      # Step 2: Create a GitHub Release and attach the JAR
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }} # The tag that triggered this release
+          releaseName: Release ${{ github.ref_name }}
+          assets: release/SampleUBAM-${{ github.ref_name#refs/tags/ }}.jar
