@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2024, James R. Kane
+ * All rights reserved.
+ */
 package org.ydnawarehouse
 
 import htsjdk.samtools.*
@@ -5,6 +9,14 @@ import htsjdk.samtools.*
 import java.io.{BufferedInputStream, File}
 import java.net.URI
 
+/**
+ * The `SampleUBAM` object provides functionality to sample reads from an input
+ * unaligned BAM (UBAM) file up to a specified target number of bases and write
+ * them to an output file. It reads the UBAM data from a given URL, processes the
+ * records, and writes them to a specified output path in SAM or BAM format.
+ *
+ * Upon successful sampling, the program outputs the total number of sampled bases.
+ */
 object SampleUBAM {
   def main(args: Array[String]): Unit = {
     if (args.length != 3) {
