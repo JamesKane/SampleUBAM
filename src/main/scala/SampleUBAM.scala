@@ -45,7 +45,7 @@ object SampleUBAM {
   }
 
   private def validateArguments(args: Array[String]): (String, String, Long) = {
-    require(args.length == 3, 
+    require(args.length == 3,
       "Usage: SampleUBAM <input_ubam_url> <output_ubam_path> <target_base_count>\n" +
       "  <target_base_count>: Specify as plain number (bases), e.g., 1000000\n" +
       "                       or human-readable formats, e.g., 10Mb, 1Gb.")
@@ -56,6 +56,7 @@ object SampleUBAM {
   }
 
   private val ProgressFrequency = 100_000
+  private val KB = 1_000
   private val MB = 1_000_000
   private val GB = 1_000_000_000
 
@@ -76,8 +77,15 @@ object SampleUBAM {
       lastProgressTime = currentTime
       lastBaseCount = totalBases
       val progress = (totalBases.toDouble / targetBaseCount * 100).min(100).toInt
-      println(f"Progress: $progress%d%% $totalBases%,d/$targetBaseCount%,d bases, $transferRate%,d bps)")
+      println(f"Progress: $progress%% ${formatNumberAbbreviated(totalBases)} of ${formatNumberAbbreviated(targetBaseCount)} bases (${formatNumberAbbreviated(transferRate)} bps)")
     }
+  }
+
+  private def formatNumberAbbreviated(value: Long): String = {
+    if (value >= 1_000_000_000) f"${value / GB}G"
+    else if (value >= 1_000_000) f"${value / MB}M"
+    else if (value >= 1_000) f"${value / KB}K"
+    else value.toString
   }
 
   private def parseTargetBaseCount(input: String): Long = {
