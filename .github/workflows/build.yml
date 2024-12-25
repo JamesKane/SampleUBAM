@@ -21,15 +21,26 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      # Step 3: Cache SBT dependencies
+      # Step 3: Install SBT
+      - name: Install SBT
+        run: |
+          echo "Installing SBT"
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8E1F4F021BF3C7CE" | sudo apt-key add
+          sudo apt-get update
+          sudo apt-get install -y sbt
+
+      # Step 4: Cache SBT dependencies
       - name: Cache SBT dependencies
         uses: coursier/cache-action@v6
 
-      # Step 4: Build bundled JAR
+      # Step 5: Build bundled JAR
       - name: Build with SBT
         run: sbt assembly
 
-      # Step 5: Upload the artifact
+      # Step 6: Upload the artifact
       - name: Upload JAR to GitHub Artifacts
         uses: actions/upload-artifact@v3
         with:
