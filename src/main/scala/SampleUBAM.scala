@@ -32,6 +32,8 @@ object SampleUBAM {
 
     var totalBases = 0L
     val progressFrequency = 100000 // Update progress every 100,000 bases
+    var lastProgressTime = System.currentTimeMillis()
+    var lastBaseCount = 0L
 
     // Use try-finally to ensure resources are safely closed
     var in: SamReader = null
@@ -57,8 +59,14 @@ object SampleUBAM {
 
         // Print progress at intervals
         if (totalBases % progressFrequency == 0 || totalBases >= targetBaseCount) {
+          val currentTime = System.currentTimeMillis()
+          val elapsedTime = (currentTime - lastProgressTime) / 1000.0 // seconds
+          val basesTransferred = totalBases - lastBaseCount
+          val transferRate = if (elapsedTime > 0) (basesTransferred / elapsedTime).toLong else 0L // bases per second
+          lastProgressTime = currentTime
+          lastBaseCount = totalBases
           val progress = (totalBases.toDouble / targetBaseCount * 100).min(100).toInt // Limit to 100%
-          println(f"Progress: $progress%d%% ${totalBases}%,d/${targetBaseCount}%,d bases)")
+          println(f"Progress: $progress%d%% ${totalBases}%,d/${targetBaseCount}%,d bases, $transferRate%,d bps)")
         }
       }
     } catch {
